@@ -7,15 +7,15 @@
   
   <title>shrine | Ph4nt0MPa1N</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="import flaskimport os app &#x3D; flask.Flask(name) app.config[‘FLAG’] &#x3D; os.environ.pop(‘FLAG’) @app.route(‘&#x2F;‘)def index():    return open(file).read() @app.route(‘&#x2F;shrine&#x2F;‘)def shrine(shrine): def safe_jin">
+  <meta name="description" content="import flask import os  app &#x3D; flask.Flask(__name__)  app.config[&#39;FLAG&#39;] &#x3D; os.environ.pop(&#39;FLAG&#39;)   @app.route(&#39;&#x2F;&#39;) def index(): return open(__file__).read()   @app.route(&#39;&#x2F;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="shrine">
 <meta property="og:url" content="https://github.com/ChristopherWuk/ChristopherWuk.github.io/2020/11/15/shrine/index.html">
 <meta property="og:site_name" content="Ph4nt0MPa1N">
-<meta property="og:description" content="import flaskimport os app &#x3D; flask.Flask(name) app.config[‘FLAG’] &#x3D; os.environ.pop(‘FLAG’) @app.route(‘&#x2F;‘)def index():    return open(file).read() @app.route(‘&#x2F;shrine&#x2F;‘)def shrine(shrine): def safe_jin">
+<meta property="og:description" content="import flask import os  app &#x3D; flask.Flask(__name__)  app.config[&#39;FLAG&#39;] &#x3D; os.environ.pop(&#39;FLAG&#39;)   @app.route(&#39;&#x2F;&#39;) def index(): return open(__file__).read()   @app.route(&#39;&#x2F;">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-11-15T06:57:53.000Z">
-<meta property="article:modified_time" content="2020-11-15T06:58:08.887Z">
+<meta property="article:modified_time" content="2020-11-15T06:59:47.550Z">
 <meta property="article:author" content="ChristopherWuk">
 <meta name="twitter:card" content="summary">
   
@@ -88,31 +88,40 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>import flask<br>import os</p>
-<p>app = flask.Flask(<strong>name</strong>)</p>
-<p>app.config[‘FLAG’] = os.environ.pop(‘FLAG’)</p>
-<p>@app.route(‘/‘)<br>def index():<br>    return open(<strong>file</strong>).read()</p>
-<p>@app.route(‘/shrine/‘)<br>def shrine(shrine):</p>
-<pre><code>def safe_jinja(s):
+        <pre><code>import flask
+import os
+
+app = flask.Flask(__name__)
+
+app.config[&#39;FLAG&#39;] = os.environ.pop(&#39;FLAG&#39;)
+
+
+@app.route(&#39;/&#39;)
+def index():
+return open(__file__).read()
+
+
+@app.route(&#39;/shrine/&#39;)
+def shrine(shrine):
+
+def safe_jinja(s):
     s = s.replace(&#39;(&#39;, &#39;&#39;).replace(&#39;)&#39;, &#39;&#39;)
     blacklist = [&#39;config&#39;, &#39;self&#39;]
     return &#39;&#39;.join([&#39;&#123;&#123;% set &#123;&#125;=None%&#125;&#125;&#39;.format(c) for c in blacklist]) + s
 
-return flask.render_template_string(safe_jinja(shrine))</code></pre>
-<p>if <strong>name</strong> == ‘<strong>main</strong>‘:<br>    app.run(debug=True)</p>
-<pre><code>代码第20行出现SSTI注入的痕迹，并且可能是jinja渲染的
-可以看到flag应该在config里面，正常来说只要输入&#123;&#123;config&#125;&#125;就能显示出config，但是很遗憾，本题设置了黑名单，过滤config
-因此要用别的代码来执行
-此题使用的是url_for或者get_flashed_message
-/shrine/&#123;&#123;url_for.__globals__&#125;&#125;,在出现的一大堆变量里找到一个current_app
-然后/shrine/&#123;&#123;url_for.__globals__['current_app'].config&#125;&#125;查看config即可拿到flag</code></pre>
+return flask.render_template_string(safe_jinja(shrine))
+
+
+if __name__ == &#39;__main__&#39;:
+     app.run(debug=True)</code></pre>
+<p>代码第20行出现SSTI注入的痕迹，并且可能是jinja渲染的<br>可以看到flag应该在config里面，正常来说只要输入就能显示出config，但是很遗憾，本题设置了黑名单，过滤config<br>因此要用别的代码来执行<br>此题使用的是url_for或者get_flashed_message<br>/shrine/,在出现的一大堆变量里找到一个current_app<br>然后/shrine/查看config即可拿到flag</p>
 <p>##1.url_for()作用:<br>#(1)给指定的函数构造 URL。<br>#(2)访问静态文件(CSS / JavaScript 等)。 只要在你的包中或是模块的所在目录中创建一个名为 static 的文件夹，在应用中使用 /static 即可访问。</p>
 <p>##2current_app<br>#在flask内部维护者两个线程隔离的栈，current_app指向了AppContext(应用上下文)中的栈顶<br>#相当于一个指针吧</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/ChristopherWuk/ChristopherWuk.github.io/2020/11/15/shrine/" data-id="ckhirpc2x0001jsv54kktcprq" class="article-share-link">Share</a>
+      <a data-url="https://github.com/ChristopherWuk/ChristopherWuk.github.io/2020/11/15/shrine/" data-id="ckhirtxe70000owv50we4a229" class="article-share-link">Share</a>
       
       
     </footer>
